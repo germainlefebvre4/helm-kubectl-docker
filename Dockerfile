@@ -2,8 +2,8 @@ FROM alpine:3.4
 
 MAINTAINER Germain LEFEBVRE <germain.lefebvre4@gmail.com@gmail.com>
 
-ENV KUBE_VERSION=v1.5.2
-ENV HELM_VERSION=v2.1.3
+ENV KUBE_VERSION=v1.16.2
+ENV HELM_VERSION=v2.15.2
 ENV HELM_FILENAME=helm-${HELM_VERSION}-linux-amd64.tar.gz
 
 
