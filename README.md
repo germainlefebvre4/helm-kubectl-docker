@@ -1,7 +1,7 @@
 # Helm Kubectl Docker
 
 # Build the version yo need
-Build whatever the version of matric kubectl/helm you need:
+Build whatever the version of matrix kubectl/helm you need:
 ```bash
 # Here we build
 #   Kubectl versions 1.14.0 to 1.14.10
