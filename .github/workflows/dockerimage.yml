@@ -2,6 +2,7 @@ name: Docker Image CI
 on:
   push:
     branches:
+    - feat/github-actions
     - v*-v*
 jobs:
   build:
