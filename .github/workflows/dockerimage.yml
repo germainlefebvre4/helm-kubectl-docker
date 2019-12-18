@@ -2,7 +2,7 @@ name: Docker Image CI
 on:
   push:
     branches:
-    - feat/github-actions
+    - feat/push-dockerhub
     - v*-v*
 jobs:
   build:
@@ -16,3 +16,10 @@ jobs:
       run: docker build . --file Dockerfile --tag germainlefebvre4/helm-kubectl-docker:${{ steps.branch_name.outputs.branch }}
     - name: Test run container - Print Helm version
       run: docker run --rm germainlefebvre4/helm-kubectl-docker:${{ steps.branch_name.outputs.branch }} version --client
+    - name: Publish to Docker Repository
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: germainlefebvre4/helm-kubectl-docker:${{ steps.branch_name.outputs.branch }}
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
