@@ -2,7 +2,6 @@ name: Docker Image CI
 on:
   push:
     branches:
-    - feat/push-dockerhub
     - v*-v*
 jobs:
   build:
