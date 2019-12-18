@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Retrieve Github branch name
-      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/} | tr '[|/]' '-')"
       id: branch_name
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag germainlefebvre4/helm-kubectl-docker:${{ steps.branch_name.outputs.branch }}
