@@ -10,9 +10,9 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Retrieve Github branch name
-      run: echo ${GITHUB_REF##*/}
+      run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
       id: branch_name
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag germainlefebvre4/helm-kubectl-docker:${{ steps.branch_name.outputs }}
     - name: Test run container - Print Helm version
-      run: docker run -ti --rm germainlefebvre4/helm-kubectl-docker:${{ steps.branch_name.outputs }} version --client
+      run: docker run -ti --rm germainlefebvre4/helm-kubectl-docker:${{ steps.branch_name.outputs.branch }} version --client
