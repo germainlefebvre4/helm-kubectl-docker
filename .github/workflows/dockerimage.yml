@@ -23,4 +23,9 @@ jobs:
         name: germainlefebvre4/helm-kubectl-docker:${{ steps.branch_name.outputs.branch }}
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
+    - name: Cleanup failing branch
+      uses: dawidd6/action-delete-branch@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branches: ${{ steps.branch_name.outputs.branch }}
+      if: failure()
