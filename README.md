@@ -32,3 +32,6 @@ for i in v1.14.{0..10} ; do
 done
 ```
 A docker image will be automatically generated when build succeed.
+
+## Dockerhub
+Link to Dockerhub : [https://hub.docker.com/r/germainlefebvre4/helm-kubectl-docker](https://hub.docker.com/r/germainlefebvre4/helm-kubectl-docker)
