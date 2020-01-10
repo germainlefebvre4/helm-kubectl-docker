@@ -3,6 +3,7 @@ on:
   push:
     branches:
     - v*-v*
+    - chore/github-matrix
 jobs:
   build:
     runs-on: ubuntu-latest
