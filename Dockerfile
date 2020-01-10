@@ -6,6 +6,7 @@ ARG KUBE_VERSION=v1.15.0
 ARG HELM_VERSION=v2.14.0
 ENV HELM_FILENAME=helm-${HELM_VERSION}-linux-amd64.tar.gz
 
+RUN echo ${KUBE_VERSION} ${HELM_VERSION} ${HELM_FILENAME}
 
 RUN apk add --update ca-certificates \
  && apk add --update -t deps curl  \
