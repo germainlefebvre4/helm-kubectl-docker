@@ -10,9 +10,9 @@ jobs:
     strategy:
       matrix:
         kubectl_version:
-          - v1.16.4
-          - v1.16.3
-          - v1.16.2
+          # - v1.16.4
+          # - v1.16.3
+          # - v1.16.2
           # - v1.16.1
           # - v1.16.0
           # - v1.15.7
@@ -33,14 +33,14 @@ jobs:
           # - v1.14.3
           # - v1.14.2
           # - v1.14.1
-          # - v1.14.0
+          - v1.14.0
         helm_version:
           # - v3.0.2
           # - v3.0.1
           # - v3.0.0
-          - v2.16.1
-          - v2.16.0
-          - v2.15.2
+          # - v2.16.1
+          # - v2.16.0
+          # - v2.15.2
           # - v2.15.1
           # - v2.15.0
           # - v2.14.3
@@ -48,7 +48,7 @@ jobs:
           # - v2.14.1
           # - v2.14.0
           # - v2.13.1
-          # - v2.13.0
+          - v2.13.0
     steps:
     - uses: actions/checkout@v1
     - name: Check if version already exists
@@ -59,10 +59,13 @@ jobs:
       if: steps.dockerhub.outputs.version_exists != 0
     - name: Test run container - Print Kubectl version
       run: docker run --rm --entrypoint=kubectl germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }} version --client
+      if: steps.dockerhub.outputs.version_exists != 0
     - name: Test run container - Print Helm version
       run: docker run --rm germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }} version --client
+      if: steps.dockerhub.outputs.version_exists != 0
     - name: Publish to Docker Repository
       uses: elgohr/Publish-Docker-Github-Action@master
+      if: steps.dockerhub.outputs.version_exists != 0
       with:
         name: germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }}
         username: ${{ secrets.DOCKERHUB_USERNAME }}
