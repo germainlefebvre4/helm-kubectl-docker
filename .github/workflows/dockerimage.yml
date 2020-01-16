@@ -52,7 +52,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Check if version already exists
-      run: "##[set-output name=dockerhub;]$(curl -s https://registry.hub.docker.com/v1/repositories/germainlefebvre4/helm-kubectl-docker/tags/dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }} > /dev/null && echo $? )"
+      run: echo "##[set-output name=dockerhub;]$(curl -s https://registry.hub.docker.com/v1/repositories/germainlefebvre4/helm-kubectl-docker/tags/dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }} > /dev/null && echo $? )"
       id: version_exists
     - name: Build the Docker image
       run: docker build . --file Dockerfile --build-arg KUBE_VERSION=${{ matrix.kubectl_version }} --build-arg HELM_VERSION=${{ matrix.helm_version }} --tag germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }}
