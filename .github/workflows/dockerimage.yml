@@ -62,16 +62,16 @@ jobs:
       id: dockerhub_tag
     - name: Build the Docker image
       run: docker build . --file Dockerfile --build-arg KUBE_VERSION=${{ matrix.kubectl_version }} --build-arg HELM_VERSION=${{ matrix.helm_version }} --tag germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }}
-      if: steps.dockerhub.outputs.dockerhub_tag != 0 && steps.kubectl.outputs.kubectl_version != 200 && steps.helm.outputs.helm_version != 200
+      if: steps.dockerhub.outputs.dockerhub_tag != 0 && steps.kubectl.outputs.kubectl_version == 200 && steps.helm.outputs.helm_version == 200
     - name: Test run container - Print Kubectl version
       run: docker run --rm --entrypoint=kubectl germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }} version --client
-      if: steps.dockerhub.outputs.version_exists != 0
+      if: steps.dockerhub.outputs.dockerhub_tag != 0 && steps.kubectl.outputs.kubectl_version == 200 && steps.helm.outputs.helm_version == 200
     - name: Test run container - Print Helm version
       run: docker run --rm germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }} version --client
-      if: steps.dockerhub.outputs.version_exists != 0
+      if: steps.dockerhub.outputs.dockerhub_tag != 0 && steps.kubectl.outputs.kubectl_version == 200 && steps.helm.outputs.helm_version == 200
     - name: Publish to Docker Repository
       uses: elgohr/Publish-Docker-Github-Action@master
-      if: steps.dockerhub.outputs.version_exists != 0
+      if: steps.dockerhub.outputs.dockerhub_tag != 0 && steps.kubectl.outputs.kubectl_version == 200 && steps.helm.outputs.helm_version == 200
       with:
         name: germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }}
         username: ${{ secrets.DOCKERHUB_USERNAME }}
