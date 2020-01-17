@@ -10,12 +10,12 @@ jobs:
     strategy:
       matrix:
         kubectl_version:
-          # - v1.16.5
-          # - v1.16.4
-          # - v1.16.3
+          - v1.16.5
+          - v1.16.4
+          - v1.16.3
           - v1.16.2
-          # - v1.16.1
-          # - v1.16.0
+          - v1.16.1
+          - v1.16.0
           # - v1.15.7
           # - v1.15.6
           # - v1.15.5
@@ -36,11 +36,11 @@ jobs:
           # - v1.14.1
           # - v1.14.0
         helm_version:
-          # - v3.0.3
-          # - v3.0.2
+          - v3.0.3
+          - v3.0.2
           - v3.0.1
-          # - v3.0.0
-          # - v2.16.1
+          - v3.0.0
+          - v2.16.1
           - v2.16.0
           # - v2.15.2
           # - v2.15.1
@@ -53,12 +53,12 @@ jobs:
           # - v2.13.0
     steps:
     - uses: actions/checkout@v1
-    # - name: Check if kubectl version already exists
-      # run: echo "##[set-output name=rc;]$(curl -s --write-out '%{http_code}' -o /dev/null https://storage.googleapis.com/kubernetes-release/release/${{ matrix.kubectl_version }}/bin/linux/amd64/kubectl)"
-      # id: kubectl
-    # - name: Check if helm version already exists
-      # run: echo "##[set-output name=rc;]$(curl -s --write-out '%{http_code}' -o /dev/null https://get.helm.sh/helm-${{ matrix.helm_version }}-linux-amd64.tar.gz)"
-      # id: helm
+    - name: Check if kubectl version already exists
+      run: echo "##[set-output name=rc;]$(curl -s --write-out '%{http_code}' -o /dev/null https://storage.googleapis.com/kubernetes-release/release/${{ matrix.kubectl_version }}/bin/linux/amd64/kubectl)"
+      id: kubectl
+    - name: Check if helm version already exists
+      run: echo "##[set-output name=rc;]$(curl -s --write-out '%{http_code}' -o /dev/null https://get.helm.sh/helm-${{ matrix.helm_version }}-linux-amd64.tar.gz)"
+      id: helm
     - name: Check if dockerhub version already exists 2
       run: curl -s -o /dev/null --write-out '%{http_code}' https://registry.hub.docker.com/v1/repositories/germainlefebvre4/helm-kubectl-docker/tags/${{ matrix.kubectl_version }}-${{ matrix.helm_version }}
     - name: Check if dockerhub version already exists
@@ -68,18 +68,18 @@ jobs:
       run: echo "_"${{ steps.dockerhub.outputs.rc }}"-"
     - name: Build the Docker image
       run: docker build . --file Dockerfile --build-arg KUBE_VERSION=${{ matrix.kubectl_version }} --build-arg HELM_VERSION=${{ matrix.helm_version }} --tag germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }}
-      if: steps.dockerhub.outputs.rc != 200
+      if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc != 200 && steps.helm.outputs.rc != 200
     - name: Test run container - Print Kubectl version
       run: docker run --rm --entrypoint=kubectl germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }} version --client
-      if: steps.dockerhub.outputs.dockerhub_tag != 0
+      if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc != 200 && steps.helm.outputs.rc != 200
     - name: Test run container - Print Helm version
       run: docker run --rm germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }} version --client
-      if: steps.dockerhub.outputs.dockerhub_tag != 0
+      if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc != 200 && steps.helm.outputs.rc != 200
     - name: Publish to Docker Repository
       uses: elgohr/Publish-Docker-Github-Action@master
-      if: steps.dockerhub.outputs.dockerhub_tag != 0
       with:
         name: germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }}
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc != 200 && steps.helm.outputs.rc != 200
 
