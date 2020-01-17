@@ -12,11 +12,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Install dependencies
-      run: jq
-      # run: |
-        # apt update
-        # apt install -y jq
     - name: Check if dockerhub version already exists
       run: echo "##[set-output name=rc;]$(curl -s -o /dev/null --write-out '%{http_code}' https://registry.hub.docker.com/v1/repositories/germainlefebvre4/helm-kubectl-docker/tags/${{ steps.kubectl.outputs.version }}-${{ steps.helm.outputs.version }} )"
       id: dockerhub
