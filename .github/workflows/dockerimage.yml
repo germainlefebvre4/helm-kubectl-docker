@@ -54,10 +54,10 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Check if kubectl version already exists
-      run: echo "##[set-output name=kubectl;]$(curl -s --write-out "%{http_code}" -o /dev/null https://storage.googleapis.com/kubernetes-release/release/v1.17.1/bin/linux/amd64/kubectl)"
+      run: echo "##[set-output name=kubectl;]$(curl -s --write-out '%{http_code}' -o /dev/null https://storage.googleapis.com/kubernetes-release/release/${{ matrix.kubectl_version }}/bin/linux/amd64/kubectl)"
       id: kubectl_version
     - name: Check if helm version already exists
-      run: echo "##[set-output name=helm;]$(curl -s --write-out "%{http_code}" -o /dev/null https://get.helm.sh/helm-v3.0.2-linux-amd64.tar.gz)"
+      run: echo "##[set-output name=helm;]$(curl -s --write-out '%{http_code}' -o /dev/null https://get.helm.sh/helm-${{ matrix.helm_version }}-linux-amd64.tar.gz)"
       id: helm_version
     - name: Check if dockerhub version already exists
       run: echo "##[set-output name=dockerhub;]$(curl -s https://registry.hub.docker.com/v1/repositories/germainlefebvre4/helm-kubectl-docker/tags/dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }} > /dev/null && echo $? )"
