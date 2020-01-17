@@ -1,6 +1,6 @@
 # Helm Kubectl Docker
 
-# Build the version yo need
+## Build the version yo need
 Build whatever the version of matrix kubectl/helm you need. Just change the versions you need to compile in file `.github/workflows/dockerimage.yml`:
 ```yaml
 jobs:
@@ -15,6 +15,9 @@ jobs:
           - v3.0.1
 ```
 A docker image will be automatically generated when build succeed.
+
+## Auto-build
+The `autobuild` branch checks latest kubectl and helm version and build an image if the combinaison does not exists on Dockerhub.
 
 ## Dockerhub
 Link to Dockerhub : [https://hub.docker.com/r/germainlefebvre4/helm-kubectl-docker](https://hub.docker.com/r/germainlefebvre4/helm-kubectl-docker)
