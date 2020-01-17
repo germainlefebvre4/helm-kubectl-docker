@@ -53,16 +53,16 @@ jobs:
     - uses: actions/checkout@v1
     - name: Check if kubectl version already exists
       run: echo "##[set-output name=kubectl;]$(curl -s --write-out "%{http_code}" https://storage.googleapis.com/kubernetes-release/release/v1.17.1/bin/linux/amd64/kubectl)"
-      id: version_exists
+      id: kubectl_version
     - name: Check if helm version already exists
       run: echo "##[set-output name=helm;]$(curl -s --write-out "%{http_code}" https://get.helm.sh/helm-v3.0.2-linux-amd64.tar.gz)"
-      id: version_exists
+      id: helm_version
     - name: Check if dockerhub version already exists
       run: echo "##[set-output name=dockerhub;]$(curl -s https://registry.hub.docker.com/v1/repositories/germainlefebvre4/helm-kubectl-docker/tags/dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }} > /dev/null && echo $? )"
-      id: version_exists
+      id: dockerhub_tag
     - name: Build the Docker image
       run: docker build . --file Dockerfile --build-arg KUBE_VERSION=${{ matrix.kubectl_version }} --build-arg HELM_VERSION=${{ matrix.helm_version }} --tag germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }}
-      if: steps.dockerhub.outputs.version_exists != 0 and steps.kubectl.outputs.version_exists != 200 and steps.helm.outputs.version_exists != 200
+      if: steps.dockerhub.outputs.dockerhub_tag != 0 and steps.kubectl.outputs.kubectl_version != 200 and steps.helm.outputs.helm_version != 200
     - name: Test run container - Print Kubectl version
       run: docker run --rm --entrypoint=kubectl germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }} version --client
       if: steps.dockerhub.outputs.version_exists != 0
