@@ -59,7 +59,7 @@ jobs:
     # - name: Check if helm version already exists
       # run: echo "##[set-output name=helm;]$(curl -s --write-out '%{http_code}' -o /dev/null https://get.helm.sh/helm-${{ matrix.helm_version }}-linux-amd64.tar.gz)"
       # id: helm_version
-    - name: Check if dockerhub version already exists
+    - name: Check if dockerhub version already exists 2
       run: curl -s -o /dev/null --write-out '%{http_code}' https://registry.hub.docker.com/v1/repositories/germainlefebvre4/helm-kubectl-docker/tags/${{ matrix.kubectl_version }}-${{ matrix.helm_version }}
     - name: Check if dockerhub version already exists
       run: echo "##[set-output name=dockerhub;]$(curl -s -o /dev/null --write-out '%{http_code}' https://registry.hub.docker.com/v1/repositories/germainlefebvre4/helm-kubectl-docker/tags/${{ matrix.kubectl_version }}-${{ matrix.helm_version }} )"
