@@ -2,8 +2,8 @@ name: Docker Image CI
 on:
   push:
     branches:
-    - v*-v*
-    - chore/github-matrix
+    - master
+    - autobuild
 jobs:
   build:
     runs-on: ubuntu-latest
