@@ -66,7 +66,7 @@ jobs:
       run: echo "_${{ steps.dockerhub.outputs.dockerhub_tag }}_"
     - name: Build the Docker image
       run: docker build . --file Dockerfile --build-arg KUBE_VERSION=${{ matrix.kubectl_version }} --build-arg HELM_VERSION=${{ matrix.helm_version }} --tag germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }}
-      if: steps.dockerhub.outputs.dockerhub_tag != "0"
+      if: steps.dockerhub.outputs.dockerhub_tag != '0'
     - name: Test run container - Print Kubectl version
       run: docker run --rm --entrypoint=kubectl germainlefebvre4/helm-kubectl-docker:dev-${{ matrix.kubectl_version }}-${{ matrix.helm_version }} version --client
       if: steps.dockerhub.outputs.dockerhub_tag != 0
