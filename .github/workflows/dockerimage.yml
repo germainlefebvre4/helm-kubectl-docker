@@ -15,7 +15,7 @@ jobs:
       run: echo "##[set-output name=version;]$(https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
       id: kubectl
     - name: Get latest helm version
-      run: echo "##[set-output name=version;]$(curl -s https://api.github.com/repos/helm/helm/releases/latest | grep -oP '\"tag_name\": \"\K(.*)(?=\")')"
+      run: echo '##[set-output name=version;]$(curl -s https://api.github.com/repos/helm/helm/releases/latest | grep -oP \'"tag_name": "\K(.*)(?=")\')'
       id: helm
     - name: Sumup versions
       run: |
