@@ -12,6 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Install dependencies
+      run: |
+        apt update
+        apt install -y jq
     - name: Check if dockerhub version already exists
       run: echo "##[set-output name=rc;]$(curl -s -o /dev/null --write-out '%{http_code}' https://registry.hub.docker.com/v1/repositories/germainlefebvre4/helm-kubectl-docker/tags/${{ steps.kubectl.outputs.version }}-${{ steps.helm.outputs.version }} )"
       id: dockerhub
@@ -19,7 +23,7 @@ jobs:
       run: echo "##[set-output name=version;]$(curl https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
       id: kubectl
     - name: Get latest helm version
-      run: echo "##[set-output name=version;]$(curl https://github.com/helm/helm/releases/latest | grep -oP '\"tag_name\": \"\K(.*)(?=\")')"
+      run: echo "##[set-output name=version;]$(curl https://github.com/helm/helm/releases/latest | jq -r '.[0].name)"
       id: helm
     - name: Sumup versions
       run: |
