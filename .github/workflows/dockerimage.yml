@@ -32,11 +32,14 @@ jobs:
     - name: Build the Docker image
       run: docker build . --file Dockerfile --build-arg KUBE_VERSION=${{ matrix.kubectl_version }} --build-arg HELM_VERSION=${{ matrix.helm_version }} --tag germainlefebvre4/helm-kubectl-docker:${{ matrix.kubectl_version }}-${{ matrix.helm_version }}
       if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc == 200 && steps.helm.outputs.rc == 200
+    - name: Test run container - Print Sh version
+      run: docker run --rm --entrypoint=kubectl germainlefebvre4/helm-kubectl-docker:${{ matrix.kubectl_version }}-${{ matrix.helm_version }} sh --help
+      if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc == 200 && steps.helm.outputs.rc == 200
     - name: Test run container - Print Kubectl version
-      run: docker run --rm --entrypoint=kubectl germainlefebvre4/helm-kubectl-docker:${{ matrix.kubectl_version }}-${{ matrix.helm_version }} version --client
+      run: docker run --rm --entrypoint=kubectl germainlefebvre4/helm-kubectl-docker:${{ matrix.kubectl_version }}-${{ matrix.helm_version }} kubectl version --client
       if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc == 200 && steps.helm.outputs.rc == 200
     - name: Test run container - Print Helm version
-      run: docker run --rm germainlefebvre4/helm-kubectl-docker:${{ matrix.kubectl_version }}-${{ matrix.helm_version }} version --client
+      run: docker run --rm germainlefebvre4/helm-kubectl-docker:${{ matrix.kubectl_version }}-${{ matrix.helm_version }} helm version --client
       if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc == 200 && steps.helm.outputs.rc == 200
     - name: Publish to Docker Repository
       uses: elgohr/Publish-Docker-Github-Action@master
