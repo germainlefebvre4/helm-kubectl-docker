@@ -86,11 +86,12 @@ jobs:
       if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc == 200 && steps.helm.outputs.rc == 200
     - name: Publish to Docker Repository
       uses: elgohr/Publish-Docker-Github-Action@master
+      env:
+        KUBECTL_VERSION: ${{ matrix.kubectl_version }}
+        HELM_VERSION: ${{ matrix.helm_version }}
       with:
         name: germainlefebvre4/helm-kubectl-docker:${{ matrix.kubectl_version }}-${{ matrix.helm_version }}
-        env:
-          KUBECTL_VERSION: ${{ matrix.kubectl_version }}
-          HELM_VERSIOn: ${{ matrix.helm_version }}
+        buildargs: KUBECTL_VERSION,HELM_VERSION
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
       if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc == 200 && steps.helm.outputs.rc == 200
