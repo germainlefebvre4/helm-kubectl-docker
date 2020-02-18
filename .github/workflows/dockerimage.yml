@@ -1,10 +1,7 @@
-name: Docker Image CI
+name: Auto-build
 on:
   schedule:
-    - cron:  '0 0 * * *'
-#  push:
-#    branches:
-#    - autobuild
+    - cron: '0 23 * * *'
 
 jobs:
   build:
