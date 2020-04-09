@@ -23,18 +23,18 @@ jobs:
         echo "kubectl version: ${{ steps.kubectl.outputs.version }}"
         echo "helm version: ${{ steps.helm.outputs.version }}"
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --build-arg KUBE_VERSION=${{ steps.kubectl.outputs.version }} --build-arg HELM_VERSION=${{ steps.helm.outputs.version }} --tag germainlefebvre4/helm-kubectl-docker:dev-${{ steps.kubectl.outputs.version }}-${{ steps.helm.outputs.version }}
+      run: docker build . --file Dockerfile --build-arg KUBE_VERSION=${{ steps.kubectl.outputs.version }} --build-arg HELM_VERSION=${{ steps.helm.outputs.version }} --tag germainlefebvre4/helm-kubectl-docker:${{ steps.kubectl.outputs.version }}-${{ steps.helm.outputs.version }}
       if: steps.dockerhub.outputs.rc != 200
     - name: Test run container - Print Kubectl version
-      run: docker run --rm --entrypoint=kubectl germainlefebvre4/helm-kubectl-docker:dev-${{ steps.kubectl.outputs.version }}-${{ steps.helm.outputs.version }} version --client
+      run: docker run --rm --entrypoint=kubectl germainlefebvre4/helm-kubectl-docker:${{ steps.kubectl.outputs.version }}-${{ steps.helm.outputs.version }} version --client
       if: steps.dockerhub.outputs.rc != 200
     - name: Test run container - Print Helm version
-      run: docker run --rm germainlefebvre4/helm-kubectl-docker:dev-${{ steps.kubectl.outputs.version }}-${{ steps.helm.outputs.version }} version --client
+      run: docker run --rm germainlefebvre4/helm-kubectl-docker:${{ steps.kubectl.outputs.version }}-${{ steps.helm.outputs.version }} version --client
       if: steps.dockerhub.outputs.rc != 200
     - name: Publish to Docker Repository
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
-        name: germainlefebvre4/helm-kubectl-docker:dev-${{ steps.kubectl.outputs.version }}-${{ steps.helm.outputs.version }}
+        name: germainlefebvre4/helm-kubectl-docker:${{ steps.kubectl.outputs.version }}-${{ steps.helm.outputs.version }}
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
       if: steps.dockerhub.outputs.rc != 200
