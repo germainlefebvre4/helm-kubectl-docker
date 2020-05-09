@@ -8,15 +8,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Check if dockerhub version already exists
-      run: echo "##[set-output name=rc;]$(curl -s -o /dev/null --write-out '%{http_code}' https://registry.hub.docker.com/v1/repositories/germainlefebvre4/helm-kubectl-docker/tags/${{ steps.kubectl.outputs.version }}-${{ steps.helm.outputs.version }} )"
-      id: dockerhub
     - name: Get latest kubectl version
       run: echo "##[set-output name=version;]$(curl https://storage.googleapis.com/kubernetes-release/release/stable.txt)"
       id: kubectl
     - name: Get latest helm version
       run: echo "##[set-output name=version;]$(curl -s https://api.github.com/repos/helm/helm/releases/latest | jq -r .tag_name)"
       id: helm
+      
+    - name: Check if dockerhub version already exists
+      run: echo "##[set-output name=rc;]$(curl -s -o /dev/null --write-out '%{http_code}' https://registry.hub.docker.com/v1/repositories/germainlefebvre4/helm-kubectl-docker/tags/${{ matrix.kubectl_version }}-${{ matrix.helm_version }} )"
+      id: dockerhub
+    - name: Check if kubectl version already exists
+      run: echo "##[set-output name=rc;]$(curl -s --write-out '%{http_code}' -o /dev/null https://storage.googleapis.com/kubernetes-release/release/${{ matrix.kubectl_version }}/bin/linux/amd64/kubectl)"
+      id: kubectl
+    - name: Check if helm version already exists
+      run: echo "##[set-output name=rc;]$(curl -s --write-out '%{http_code}' -o /dev/null https://get.helm.sh/helm-${{ matrix.helm_version }}-linux-amd64.tar.gz)"
+      id: helm
+
     - name: Sumup versions
       run: |
         echo "dockerhub: ${{ steps.dockerhub.outputs.rc }} (needs 404)"
@@ -24,18 +32,21 @@ jobs:
         echo "helm version: ${{ steps.helm.outputs.version }}"
     - name: Build the Docker image
       run: docker build . --file Dockerfile --build-arg KUBE_VERSION=${{ steps.kubectl.outputs.version }} --build-arg HELM_VERSION=${{ steps.helm.outputs.version }} --tag germainlefebvre4/helm-kubectl-docker:${{ steps.kubectl.outputs.version }}-${{ steps.helm.outputs.version }}
-      if: steps.dockerhub.outputs.rc != 200
+      if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc == 200 && steps.helm.outputs.rc == 200
+    - name: Test run container - Print Sh version
+      run: docker run --rm germainlefebvre4/helm-kubectl-docker:${{ matrix.kubectl_version }}-${{ matrix.helm_version }} sh --help
+      if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc == 200 && steps.helm.outputs.rc == 200
     - name: Test run container - Print Kubectl version
-      run: docker run --rm --entrypoint=kubectl germainlefebvre4/helm-kubectl-docker:${{ steps.kubectl.outputs.version }}-${{ steps.helm.outputs.version }} version --client
-      if: steps.dockerhub.outputs.rc != 200
+      run: docker run --rm germainlefebvre4/helm-kubectl-docker:${{ matrix.kubectl_version }}-${{ matrix.helm_version }} kubectl version --client
+      if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc == 200 && steps.helm.outputs.rc == 200
     - name: Test run container - Print Helm version
-      run: docker run --rm germainlefebvre4/helm-kubectl-docker:${{ steps.kubectl.outputs.version }}-${{ steps.helm.outputs.version }} version --client
-      if: steps.dockerhub.outputs.rc != 200
+      run: docker run --rm germainlefebvre4/helm-kubectl-docker:${{ matrix.kubectl_version }}-${{ matrix.helm_version }} helm version --client
+      if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc == 200 && steps.helm.outputs.rc == 200
     - name: Publish to Docker Repository
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
         name: germainlefebvre4/helm-kubectl-docker:${{ steps.kubectl.outputs.version }}-${{ steps.helm.outputs.version }}
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
-      if: steps.dockerhub.outputs.rc != 200
+      if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc == 200 && steps.helm.outputs.rc == 200
 
