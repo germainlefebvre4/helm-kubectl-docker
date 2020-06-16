@@ -137,4 +137,3 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
       if: steps.dockerhub.outputs.rc != 200 && steps.kubectl.outputs.rc == 200 && steps.helm.outputs.rc == 200
-
