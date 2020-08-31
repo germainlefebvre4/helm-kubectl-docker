@@ -1,7 +1,7 @@
 name: Auto-build
 on:
   schedule:
-    - cron: '0 23 * * *'
+    - cron: '0 23 1 1 *'
 
 jobs:
   build:
